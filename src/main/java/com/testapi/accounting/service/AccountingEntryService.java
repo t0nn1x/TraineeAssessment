@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.testapi.accounting.entity.AccountingEntry;
 import com.testapi.accounting.repository.AccountingEntryRepository;
 
+@Service
 public class AccountingEntryService {
     private final AccountingEntryRepository accountingEntryRepository;
 
