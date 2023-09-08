@@ -1,4 +1,5 @@
 package com.testapi.accounting.entity;
+import com.testapi.accounting.constant.UserRole;
 
 import java.time.LocalDateTime;
 
@@ -30,6 +31,4 @@ public class User {
     private String photoPath;
 }
 
-enum UserRole {
-    ADMIN, NORMAL
-}
+
