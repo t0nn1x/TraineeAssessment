@@ -2,6 +2,8 @@ package com.testapi.accounting.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,13 +44,13 @@ public class AccountingEntryController {
 
     // Create a new entry
     @PostMapping
-    public ResponseEntity<AccountingEntry> createEntry(@RequestBody AccountingEntry entry){
+    public ResponseEntity<AccountingEntry> createEntry(@Valid @RequestBody AccountingEntry entry) {
         return ResponseEntity.ok(accountingEntryService.save(entry));
     }
 
     // Update entry
     @PutMapping("/{id}")
-    public ResponseEntity<AccountingEntry> updateEntry(@PathVariable Long id, @RequestBody AccountingEntry updatedEntry){
+    public ResponseEntity<AccountingEntry> updateEntry(@PathVariable Long id, @Valid @RequestBody AccountingEntry updatedEntry){
         return accountingEntryService.findById(id).map(entry -> {
             entry.setEntryText(updatedEntry.getEntryText());
             entry.setRecordType(updatedEntry.getRecordType());

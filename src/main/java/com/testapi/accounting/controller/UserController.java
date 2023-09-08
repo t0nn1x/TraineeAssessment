@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,7 +51,7 @@ public class UserController {
 
     // Create a new user
     @PostMapping
-    public ResponseEntity<User> createUser(
+    public ResponseEntity<?> createUser( // ResponseEntity<?> is used to return any type of response
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
@@ -63,6 +62,14 @@ public class UserController {
         user.setEmail(email);
         user.setPassword(password);
         user.setRole(role); // This will set the role to NORMAL if not provided in the request
+
+        if (email == null || email.isEmpty() || email.length() > 255 || !email.contains("@")) {
+            return ResponseEntity.badRequest().body("Invalid email format.");
+        }
+
+        if (password == null || password.length() < 8) {
+            return ResponseEntity.badRequest().body("Password must be at least 8 characters.");
+        }
 
         if (loggedInAt != null) {
             user.setLoggedInAt(loggedInAt);
@@ -81,7 +88,7 @@ public class UserController {
 
     // Update user
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<?> updateUser(
             @PathVariable Long id,
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "email", required = false) String email,
@@ -109,6 +116,14 @@ public class UserController {
             if (file != null && !file.isEmpty()) {
                 String fileName = fileStorageService.storeFile(file);
                 user.setPhotoPath(fileName);
+            }
+
+            if (email != null && (email.isEmpty() || email.length() > 255 || !email.contains("@"))) {
+                return ResponseEntity.badRequest().body("Invalid email format.");
+            }
+
+            if (password != null && password.length() < 8) {
+                return ResponseEntity.badRequest().body("Password must be at least 8 characters.");
             }
 
             return ResponseEntity.ok(userService.save(user));
