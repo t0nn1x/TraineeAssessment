@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +36,15 @@ public class User implements UserDetails {
     private LocalDateTime loggedInAt;
     private LocalDateTime updatedAt;
     private String photoPath;
+
+    @PreUpdate
+    @PrePersist
+    public void updateTimestamps() {
+        updatedAt = LocalDateTime.now();
+        if (loggedInAt == null) {
+            loggedInAt = LocalDateTime.now();
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
