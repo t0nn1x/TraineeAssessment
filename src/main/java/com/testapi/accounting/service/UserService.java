@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.testapi.accounting.entity.User;
@@ -14,7 +15,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -24,7 +28,7 @@ public class UserService {
      * @param id the ID of the user
      * @return an Optional<User> which contains the user if found
      */
-    public Optional<User> findById(Long id){
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -33,7 +37,7 @@ public class UserService {
      *
      * @return a List of users
      */
-    public List<User> findAll(){
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -44,7 +48,8 @@ public class UserService {
      * @return the saved user
      */
 
-    public User save(User user){
+    public User save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -53,7 +58,7 @@ public class UserService {
      *
      * @param id the ID of the user to be deleted
      */
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 }
