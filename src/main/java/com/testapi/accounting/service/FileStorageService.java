@@ -9,10 +9,22 @@ import java.nio.file.StandardCopyOption;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Service for file storage operations.
+ */
+
 @Service
 public class FileStorageService {
     private final Path fileStorageLocation = Paths.get("src/main/resources/static/photos");
 
+    /**
+     * Store a file in the file storage location.
+     * 
+     * @param file MultipartFile to be stored.
+     * @return Name of the stored file.
+     * @throws RuntimeException if there's an error during file storage.
+     */
+    
     public String storeFile (MultipartFile file) {
         try{
             // Check if the file's name contains invalid characters
