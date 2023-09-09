@@ -5,6 +5,7 @@ import com.testapi.accounting.entity.User;
 import com.testapi.accounting.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,15 +21,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (!optionalUser.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
+
+        User user = optionalUser.get();
 
         // Set the loggedInAt field to the current time
         user.setLoggedInAt(LocalDateTime.now());
         userRepository.save(user);
-        
+
         return user;
     }
 }

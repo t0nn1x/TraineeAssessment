@@ -1,4 +1,4 @@
-package com.testapi.accounting.service;
+package com.testapi.accounting.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.testapi.accounting.entity.AccountingEntry;
-import com.testapi.accounting.repository.AccountingEntryRepository;
+import com.testapi.accounting.entity.User;
 
 @Service
 public class AccountingEntryService {
@@ -54,5 +54,9 @@ public class AccountingEntryService {
      */
     public void deleteById(Long id){
         accountingEntryRepository.deleteById(id);
+    }
+
+    public List<AccountingEntry> findByUser(User user) {
+        return accountingEntryRepository.findByOwner(user);
     }
 }

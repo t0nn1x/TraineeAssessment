@@ -1,10 +1,12 @@
 package com.testapi.accounting.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,8 +97,13 @@ public class UserController {
             @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "role", required = false) UserRole role,
             @RequestParam(value = "loggedInAt", required = false) LocalDateTime loggedInAt,
-            @RequestParam(value = "updatedAt", required = false) LocalDateTime updatedAt) throws IOException {
+            @RequestParam(value = "updatedAt", required = false) LocalDateTime updatedAt,
+            Principal principal) throws IOException {
         return userService.findById(id).map(user -> {
+            if (!principal.getName().equals("ADMIN") && !principal.getName().equals(email)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+            }
+
             if (email != null) {
                 user.setEmail(email);
             }
@@ -132,7 +139,16 @@ public class UserController {
 
     // Delete user by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal) {
+        User userToDelete = userService.findById(id).orElse(null);
+        if (userToDelete == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!principal.getName().equals("ADMIN") && !principal.getName().equals(userToDelete.getEmail())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
